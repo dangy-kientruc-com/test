@@ -11,8 +11,12 @@
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/','Backend\IndexController@index')->name('hokhau');
 
-Route::get('/','Backend\IndexController@index');
+Route::get('/them-ho-khau.html','Backend\IndexController@getAddHokhau');
+Route::post('/them-ho-khau.html','Backend\IndexController@postAddHokhau');
+
+
+Route::get('/sua-ho-khau/{id}','Backend\IndexController@getHokhau');
+Route::post('/sua-ho-khau/{id}','Backend\IndexController@setHokhau');
+Route::get('/xoa-ho-khau/{id}','Backend\IndexController@deleteHokhau');

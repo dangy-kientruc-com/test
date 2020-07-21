@@ -14,7 +14,7 @@ class Nhankhau extends Migration
     public function up()
     {
         Schema::create('nhankhau',function(Blueprint  $table){
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('ho_ten');
             $table->dateTime('ngay_sinh');
             $table->dateTime('ngay_mat');
