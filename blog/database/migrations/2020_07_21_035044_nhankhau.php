@@ -17,12 +17,14 @@ class Nhankhau extends Migration
             $table->increments('id');
             $table->string('ho_ten');
             $table->dateTime('ngay_sinh');
-            $table->dateTime('ngay_mat');
+            $table->dateTime('ngay_mat')->nullable();
             $table->boolean('gioi_tinh');
             $table->string('quan_he');
             $table->string('email');
             $table->string('sdt');
             $table->dateTime('ngay_nhap_khau');
+            $table->integer('hokhau_id');
+            $table->string('images');
         });
     }
 

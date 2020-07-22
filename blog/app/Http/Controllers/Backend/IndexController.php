@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
+use Illuminate\Support\Facades\Response;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Excel as Export2;
 class IndexController extends Controller
 {
    	public function index()
-   	{
+   	{	
    		$hk= DB::table('hokhau')->select('*')->get();
    		return view('index',['hk'=>$hk]);
    	}
@@ -73,4 +76,40 @@ class IndexController extends Controller
    		DB::table('hokhau')->where('id',$id)->delete();
    		return redirect()->route('hokhau');
    	}
+    public function export()
+    {
+        $headers = array(
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=file.csv",
+            "Pragma" => "no-cache",
+            'Content-type: text/csv; charset=Shift-JIS',
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        );
+        $reviews = DB::table('hokhau')->select('*')->get();
+
+       
+        $columns = array('id','hk_cd','chuho_id','dia_chi','ngay_cap','số lượng thành viên');
+
+        $callback = function() use ($reviews, $columns)
+        {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach($reviews as $review) {
+                $sl = DB::table('nhankhau')->where('hokhau_id',$review->id)->count();
+                $date =  date_format(date_create($review->ngay_cap),'d-m-Y');
+                fputcsv($file, array($review->id, $review->hk_cd, $review->chuho_id, $review->dia_chi,$date,$sl));
+            }
+            fclose($file);
+        };
+        return Response::stream($callback, 200, $headers);
+        //return redirect()->route('hokhau',Response::stream($callback, 200, $headers););
+        //return redirect()->route('hokhau');
+    }
+    public function export2(Request $rq)
+    {
+
+        return Excel::download(new Export2($rq->charset) ,'hokhau.csv');
+    }
 }
