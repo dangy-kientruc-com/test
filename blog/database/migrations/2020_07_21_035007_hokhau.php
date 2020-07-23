@@ -16,7 +16,7 @@ class Hokhau extends Migration
         Schema::create('hokhau',function (Blueprint  $table){
             $table->increments('id');
             $table->string('hk_cd');
-            $table->integer('chuho_id');
+            $table->integer('chuho_id')->nullable();
             $table->string('dia_chi');
             $table->dateTime('ngay_cap');
         });

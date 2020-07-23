@@ -3,6 +3,7 @@
 <head>
 	<title></title>
 	<link rel="stylesheet" type="text/css" href="{{asset('css/index.css')}}">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
 
@@ -19,7 +20,7 @@
 	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
 </head>
 <body>
-	<header></header>
+	@include('layouts.header')
 	<div>
 		<div class="container">
 			<h2>
@@ -75,7 +76,7 @@
 		 	<div class="DS"></div>
 		 </div>
 	</div>
-	<div class="fixed-tb" style="position: fixed;top: 50%;left: 50%;width: 300px;background: #FFF;border:1px solid #d3d3d3;padding: 20px;border-radius: 4px;transform: translate3d(-50%,-50%,0);display: none;">
+	<div class="fixed-tb fadeIn" style="position: fixed;top: 50%;left: 50%;width: 300px;background: #FFF;border:1px solid #d3d3d3;padding: 20px;border-radius: 4px;transform: translate3d(-50%,-50%,0);display: none;">
 		<div>Bạn có chắc thực hiện chức năng này</div>
 		<hr>
 		<div>
@@ -84,7 +85,7 @@
 		</div>
 	</div>
 
-	<div class="popup-excel" style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,0.8);display: none;">
+	<div class="popup-excel fadeIn" style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,0.8);display: none;">
 			<div style="width: 600px;background: #FFF;padding: 10px;margin: auto;margin-top: 100px;position: relative;border-radius: 4px;">
 				<div class="close-popup-excel" style="width: 30px;height: 30px;border-radius: 100%;background: #FFF;position: absolute;top: -40px;right: -40px;display: flex;align-items: center;justify-content: center;">X</div>
 				<div style="border-bottom: 1px solid #d3d3d3;"><h3>Danh sách hộ khẩu</h3></div>
@@ -135,6 +136,21 @@
 		.PP .PC:nth-child(2n)
 		{
 			background: #f3f3f3;
+		}
+		.fadeIn
+		{
+			animation: fadeIn 0.1s linear 1;
+		}
+		@keyframes fadeIn
+		{
+			0%
+			{
+				opacity: 0;
+			}
+			100%
+			{
+				opacity: 1;
+			}
 		}
 	</style>
 	<script>

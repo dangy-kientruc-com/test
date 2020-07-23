@@ -30,10 +30,9 @@
 			</div>
 			<div class="col-ld-6 col-md-6 col-xs-12">
 				<label>Chủ hộ ID</label>
-				<select class="form-control" name="chuho_id">
+				<select class="form-control" name="chuho_id" readonly>
 					<option value="">Chọn Chủ hộ</option>
-					<option value="1"> Chủ hộ 1</option>
-					<option value="2"> Chủ hộ 2</option>
+					<
 				</select>
 			</div>
 			<div class="col-ld-6 col-md-6 col-xs-12">

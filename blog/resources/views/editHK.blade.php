@@ -52,9 +52,9 @@
 					<div class="col-ld-6 col-md-6 col-xs-12">
 						<label>Chủ hộ ID</label>
 						<select class="form-control" name="chuho_id">
-							<option value="">Chọn Chủ hộ</option>
-							<option value="1"> Chủ hộ 1</option>
-							<option value="2"> Chủ hộ 2</option>
+							@foreach($nk as $key =>$value)
+								<option value="{{$value->id}}" <?php if($hk->chuho_id == $value->id) echo 'selected'; ?> >{{$value->ho_ten}} </option>
+							@endforeach
 						</select>
 					</div>
 					<div class="col-ld-6 col-md-6 col-xs-12">

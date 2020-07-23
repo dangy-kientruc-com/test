@@ -25,6 +25,8 @@ class Nhankhau extends Migration
             $table->dateTime('ngay_nhap_khau');
             $table->integer('hokhau_id');
             $table->string('images');
+            $table->string('user')->nullable();
+            $table->string('password')->nullable();
         });
     }
 

@@ -6,10 +6,12 @@
 	</h2>
 	<div style="display: flex;justify-content: space-between;align-items: center;">
 		<div><h3>Danh sách thành viên có trong hộ khẩu</h3></div>
+		@if(Auth::check())
 		<div>
 			<button class="btn btn-info" id="show-popup"> Show popup</button>
 			<a href="them-nhan-khau/{{$id}}"><button class="btn btn-primary">Thêm nhân khẩu</button></a>
 		</div>
+		@endif
 	</div>
 	@if(Session::has('message'))
 	<div class="alert alert-success">
@@ -31,7 +33,9 @@
 		            <th>Email</th>
 		            <th>SDT</th>
 		            <th>Ngày nhập khẩu</th>
+		            @if(Auth::check())
 		            <th></th>
+		            @endif
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -44,22 +48,25 @@
 		            </td>
 		            <td>{{date_format(date_create($value->ngay_sinh),'d-m-Y')}}</td>
 		            <td> @if ($value->ngay_mat !="") {{date_format(date_create($value->ngay_mat),'d-m-Y')}} @endif</td>
-		            <td>@if($value->gioi_tinh == 1 ) {{ 'Nam'}} @else {{'Nữ'}} @endelse @endif</td>
+		            <td>@if($value->gioi_tinh == 1 ) {{ 'Nam'}} @else {{'Nữ'}}  @endif</td>
 		            <td>{{$value->quan_he}}</td>
 		            <td>{{$value->email}}</td>
 		            <td>{{$value->sdt}}</td>
 		            <td>{{date_format(date_create($value->ngay_nhap_khau),'d-m-Y')}}</td>
+		            @if(Auth::check())
 		            <td>
 		            	<a href="xoa-nhan-khau/{{$value->id}}-{{$value->hokhau_id}}" class="delete"><button class="btn btn-danger">Xóa</button></a>
 		            	<a href="sua-nhan-khau/{{$value->id}}-{{$value->hokhau_id}}"><button class="btn btn-primary">Edit</button></a>
 		            </td>
+		            @endif
 		        </tr>
 		       	@endforeach
 		    </tbody>
 		</table>
 	</div>
 </div>
-<div class="popup-excel" style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,0.8);display: none;">
+@if(Auth::check())
+<div class="popup-excel fadeIn" style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,0.8);display: none;">
 			<div style="width: 1200px;background: #FFF;padding: 10px;margin: auto;margin-top: 100px;position: relative;border-radius: 4px;">
 				<div class="close-popup-excel" style="width: 30px;height: 30px;border-radius: 100%;background: #FFF;position: absolute;top: -40px;right: -40px;display: flex;align-items: center;justify-content: center;">X</div>
 				<div style="border-bottom: 1px solid #d3d3d3;"><h3>Danh sách hộ khẩu</h3></div>
@@ -91,7 +98,7 @@
 							<div>{{date_format(date_create($value->ngay_sinh),'d-m-Y')}}</div>
 						
 							<div> @if ($value->ngay_mat !="") {{date_format(date_create($value->ngay_mat),'d-m-Y')}} @endif</div>
-							<div>@if($value->gioi_tinh == 1 ) {{ 'Nam'}} @else {{'Nữ'}} @endelse @endif</div>
+							<div>@if($value->gioi_tinh == 1 ) {{ 'Nam'}} @else {{'Nữ'}}  @endif </div>
 							<div>{{$value->quan_he}}</div>
 							<div>{{$value->email}}</div>
 							<div>{{$value->sdt}}</div>
@@ -116,6 +123,7 @@
 				</div>
 			</div>
 	</div>
+	@endif
 	<style>
 		.PP .PC
 		{
