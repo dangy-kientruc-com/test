@@ -65,12 +65,13 @@ class IndexController extends Controller
    		$validate= $rq->validate([
    			'hk_cd'=>'required',
    			'dia_chi'=>'required',
-   			'ngay_cap'=>'required'
+   			'ngay_cap'=>'required|date_format:Y/m/d'
    		],
    		[
    			'hk_cd.required'=>'Hộ khẩu công dân không được để trống',
    			'dia_chi.required' =>'Địa chỉ không được để trống',
-   			'ngay_cap.required' =>'Ngày cấp không được để trống'
+   			'ngay_cap.required' =>'Ngày cấp không được để trống',
+            'ngay_cap.date_format' =>'Ngày cấp phải đúng định dạng Năm/Tháng/Ngày ex:2020/02/1995',
    		]);
    		try {
    			$date = date_create($rq->ngay_cap);

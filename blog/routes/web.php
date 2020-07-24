@@ -32,6 +32,8 @@ Route::group(['middleware'=>'checkuser'],function(){
 	
 
 // Quản lý nhân khẩu
+Route::get('/nhan-khau/doi-mat-khau','Backend\nhankhauController@getChangepassword')->name('doimatkhau');
+Route::post('/nhan-khau/doi-mat-khau','Backend\nhankhauController@postChangepassword');
 Route::get('/nhan-khau/export-{id}','Backend\nhankhauController@export2')->name('export');
 Route::get('/nhan-khau/{id}','Backend\nhankhauController@index')->name('nhankhau');
 

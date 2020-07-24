@@ -56,10 +56,11 @@
 		$(document).ready( function () {
 		    $('#table_id').DataTable();
 		} );
+		var url = '';
 		$('.delete').click(function(e){
-			var _this= $(this);
+			url = $(this).attr('href');
 			$('#xacnhan').click(function(){
-				window.location.href = $(_this).attr('href');
+				window.location.href = url;
 			});
 			$('.fixed-tb').css('display','block');
 			e.preventDefault();

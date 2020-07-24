@@ -8,6 +8,9 @@ use DB;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\ExcelNhanKhau as Export2;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\User;
 class nhankhauController extends Controller
 {
     function stripVN($str) {
@@ -48,6 +51,13 @@ class nhankhauController extends Controller
         {
             return view('layouts.404');
         }
+        if(Auth::guard('nhankhau')->check())
+        {
+            if(Auth::guard('nhankhau')->user()->hokhau_id != $id)
+            {
+                return view('layouts.404');
+            }
+        }
     	$nk = DB::table('nhankhau')->select('*')->where('hokhau_id',$id)->get();
     	return view('nhankhau.index',['id'=>$id,'nk'=>$nk]);
     }
@@ -67,21 +77,26 @@ class nhankhauController extends Controller
    			'ngay_sinh'=>'required|date_format:Y/m/d',
    			'quan_he'=>'required',
    			'email'=>'required|email',
-   			'sdt'=>'required',
+   			// 'sdt'=>'required|regex:/^(\d+(,(0)[0-9]{3}[?-][0-9]{3}[?-][0-9]{3})?)/|not_regex:/[a-zA-Z]/|min:10|',
+            'sdt'=>'required|regex:/(0)[0-9]{3}(-)?[0-9]{3}(-)?[0-9]{3}/|not_regex:/[a-zA-Z]/|min:10|max:12',
    			'ngay_nhap_khau'=>'required|date_format:Y/m/d',
             'fileimg'=>'mimes:png,jpg,jpeg,gif'
 
    		],
    		[
+
    			'ho_ten.required'=>'Họ tên  công dân không được để trống',
    			'ngay_sinh.required' =>'Ngày sinh không được để trống',
    			'quan_he.required' =>'Ngày cấp không được để trống',
    			'email.required'=>'Email không được để trống',
    			'email.email'=>'Bạn phải nhập email',
    			'sdt.required'=>'Số điện thoại không được để trống',
+            'sdt.regex' =>'Nhập số điện thoại từ 0 - 9, phải có kí tự 0 đầu tiên, ví dụ : 0933363363,0933-363-363',
+            'sdt.not_regex'=>'Không được nhập chữ',
+            'sdt.min' =>'Số điện thoại phải có ít nhất 10 kí tự',
    			'ngay_nhap_khau.required'=>'Ngày nhập khẩu không được để trống',
-   			'ngay_sinh.date_format'=>'Nhày sinh nhập đúng kiểu Năm/ tháng / ngày (1900/02/02)',
-   			'ngay_nhap_khau.date_format' =>'Nhày nhập khẩu nhập đúng kiểu Năm/ tháng / ngày (1900/02/02)',
+   			'ngay_sinh.date_format'=>'Nhày sinh nhập đúng kiểu Năm/ tháng / ngày (1900/02/28)',
+   			'ngay_nhap_khau.date_format' =>'Nhày nhập khẩu nhập đúng kiểu Năm/ tháng / ngày (1900/02/28)',
             'fileimg.mimes' =>'File không đúng định dạng png, jpg, jpeg,gif'
 
    		]);
@@ -132,8 +147,20 @@ class nhankhauController extends Controller
     }
     public function delete($id,$id_hk)
     {	
+        $link = DB::table('nhankhau')->select('images')->where('id',$id)->first();
+        $link = $link->images;
+        if($link)
+        {
+            unlink(storage_path('../public/'.$link));
+        }
+        
     	DB::table('nhankhau')->where('id',$id)->delete();
-    	 return redirect()->route('nhankhau',$id_hk)->with('message','Xóa nhân khẩu thành công');
+        $hk = DB::table('hokhau')->select('*')->where('chuho_id',$id)->first();
+        if($hk)
+        {
+            DB::table('hokhau')->where('id',$id_hk)->update(['chuho_id'=>null]);    
+        }
+    	return redirect()->route('nhankhau',$id_hk)->with('message','Xóa nhân khẩu thành công');
     }
     public function getEdit($id,$id_hk)
     {
@@ -219,5 +246,38 @@ class nhankhauController extends Controller
     public function ajaxIndex($id){
         $nk=DB::table('nhankhau')->select('*')->where('hokhau_id',$id)->get();
         return view('nhankhau.ajaxIndex',['nk'=>$nk]);
+    }
+    public function getChangepassword()
+    {
+        return view('nhankhau.changepassword');
+    }
+    public function postChangepassword(Request $rq)
+    {
+        $validate =$rq->validate([
+            'oldpassword' =>'required',
+            'newpassword'=>'required',
+            'repassword'=>'required|same:newpassword',
+        ],[
+            'oldpassword.required'=>'Mật khẩu cũ không được để trống',
+            'newpassword.required'=>'Mật khẩu mới không được để trống',
+            'repassword.required'=>'Vui lòng nhập lại mật khẩu mới',
+            'repassword.same'=>'Nhập lại mật khẩu phải trùng với mật khẩu mới'
+
+        ]);
+        if(Auth::check())
+        {
+            if(Hash::check($rq->oldpassword,Auth::user()->password))
+            {
+                $new = User::find(Auth::user()->id);
+                $new->password= Hash::make($rq->newpassword);
+                $new->save();
+                return redirect()->route('doimatkhau')->with('message','Đổi mật khẩu thành công');
+            }
+            else
+            {
+                return redirect()->route('doimatkhau')->with('error','Mật khẩu cũ không đúng');
+            }
+        }
+        return 1;
     }
 }

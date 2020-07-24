@@ -26,9 +26,15 @@
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 						<div style="padding: 10px;">
+					    	<a class="dropdown-item" href="/nhan-khau/doi-mat-khau">Thông tin cá nhân</a>
+					    </div>
+					   	<div style="padding: 10px;">
+					    	<a class="dropdown-item" href="/nhan-khau/doi-mat-khau">Đổi mật khẩu</a>
+					    </div>
+					    
+					    <div style="padding: 10px;">
 					    	<a class="dropdown-item" href="/logout">Logout</a>
 					    </div>
-					   
 					 </div>
 				</div>
 			</div>
@@ -40,7 +46,7 @@
 	{
 		position: sticky;
 		height: 60px;border-bottom: 1px solid #d3d3d3;
-		top: 0;background: #FFF;
+		top: 0;background: #FFF;z-index: 100;
 	}
 	header .list
 	{
