@@ -1,0 +1,23 @@
+*
+{
+	padding: 0; margin: 0;
+}
+.slidebar
+{
+	border-top: 1px solid #d3d3d3;
+	margin-top: 10px;
+}
+.slidebar-li
+{
+	padding: 6px 0; line-height: 30px;border-bottom: 1px solid #d3d3d3;
+	display: flex;align-items: center;
+}
+.slidebar-li i 
+{
+	margin-right: 10px;
+	font-size: 20px;
+}
+.slidebar-li  a
+{
+	color: #FFF;
+}

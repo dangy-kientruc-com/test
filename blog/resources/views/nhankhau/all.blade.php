@@ -53,7 +53,7 @@
 		}
 		.show-li:nth-child(2n)
 		{
-			background: #d3d3d3;
+			background: #f3f3f3;
 		}
 		.body-show div
 		{

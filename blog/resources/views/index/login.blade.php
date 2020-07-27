@@ -30,7 +30,7 @@
 				</div>
 				<div style="margin-top: 10px;">
 					<label>Mật phẩu</label>
-					<input type="text" name="password" class="form-control" placeholder="Mật khẩu của bạn">
+					<input type="password" name="password" class="form-control" placeholder="Mật khẩu của bạn">
 				</div>
 				<div style="margin-top: 10px;">
 					<button class="btn btn-primary">Đăng nhập</button>

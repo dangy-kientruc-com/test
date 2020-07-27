@@ -31,6 +31,7 @@
 				<div style="height: 100px;width: 100px;border:1px dashed #d3d3d3; position: relative;padding: 5px;">
 					<input type="file" name="fileimg" style="position: absolute;width: 100%;height: 100%;opacity: 0;z-index: 1;" id="imgInp">
 					<img src="{{asset('/')}}{{$nk->images}}" id="blah" style="width: 100%;">
+					<input type="hidden"  name="imgbase64" value="{{old('imgbase64')}}">
 				</div>
 			</div>
 			<div class="col-ld-6 col-md-6 col-xs-12 mt50">
@@ -68,6 +69,16 @@
 				<label>Ngày nhập khẩu</label>
 				<input type="text" name="ngay_nhap_khau" id="ngay_nhap_khau" class="form-control" value="{{date_format(date_create($nk->ngay_nhap_khau),'Y/m/d')}}"  style="background: #FFF;">
 			</div>
+			<div class="col-ld-6 col-md-6 col-xs-12">
+				<label>Tài khoản</label>
+				<div class="form-control">
+					{{$nk->user}}
+				</div>
+			</div>
+			<div class="col-ld-6 col-md-6 col-xs-12">
+				<label>Mật khẩu</label>
+				<input type="password" name="password" class="form-control">
+			</div>
 			<div class="col-xs-12 " style="margin-top: 10px;">
 				<button class="btn btn-primary" type="submit">Cập nhật</button>
 			</div>
@@ -91,6 +102,7 @@
 		    
 		    reader.onload = function(e) {
 		      $('#blah').attr('src', e.target.result);
+		       $('input[name="imgbase64"]').val(e.target.result);
 		    }
 		    
 		    reader.readAsDataURL(input.files[0]); // convert to base64 string

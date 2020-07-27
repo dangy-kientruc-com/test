@@ -38,13 +38,13 @@ class nhankhauController extends Controller
         {       
             $s = mb_strtolower($rq->s,'UTF-8');
             //$nk->where("ho_ten",'like','%'.$rq->s.'%');
-            $nk->whereRaw("LOWER(ho_ten) LIKE BINARY '%".$s."%'");
+            $nk->whereRaw("LOWER(ho_ten) LIKE BINARY '%".htmlspecialchars($s)."%'");
         }
         $nk=$nk->paginate(2)->appends(request()->query());
        
         return view('nhankhau.all',['nk'=>$nk]);
     }
-    public function index($id)
+    public function index($id, Request $rq)
     {   
         $hk = DB::table('hokhau')->select('*')->where('id',$id)->first();
         if(!$hk)
@@ -58,7 +58,18 @@ class nhankhauController extends Controller
                 return view('layouts.404');
             }
         }
-    	$nk = DB::table('nhankhau')->select('*')->where('hokhau_id',$id)->get();
+    	$nk = DB::table('nhankhau')->select('*')->where('hokhau_id',$id);
+        if($rq->s)
+        {
+            $s = mb_strtolower($rq->s,'UTF-8');
+            $nk=$nk->whereRaw("LOWER(ho_ten) LIKE  '%".htmlspecialchars($s)."%'");
+        }
+        if($rq->sort!="")
+        {
+            $nk=$nk->orderBy('ho_ten',$rq->sort);
+        }
+        
+        $nk=$nk->get();
     	return view('nhankhau.index',['id'=>$id,'nk'=>$nk]);
     }
     public function getAdd($id)
@@ -80,7 +91,9 @@ class nhankhauController extends Controller
    			// 'sdt'=>'required|regex:/^(\d+(,(0)[0-9]{3}[?-][0-9]{3}[?-][0-9]{3})?)/|not_regex:/[a-zA-Z]/|min:10|',
             'sdt'=>'required|regex:/(0)[0-9]{3}(-)?[0-9]{3}(-)?[0-9]{3}/|not_regex:/[a-zA-Z]/|min:10|max:12',
    			'ngay_nhap_khau'=>'required|date_format:Y/m/d',
-            'fileimg'=>'mimes:png,jpg,jpeg,gif'
+            'fileimg'=>'mimes:png,jpg,jpeg,gif',
+            'username'=>'required',
+            'password' =>'required',
 
    		],
    		[
@@ -97,7 +110,9 @@ class nhankhauController extends Controller
    			'ngay_nhap_khau.required'=>'Ngày nhập khẩu không được để trống',
    			'ngay_sinh.date_format'=>'Nhày sinh nhập đúng kiểu Năm/ tháng / ngày (1900/02/28)',
    			'ngay_nhap_khau.date_format' =>'Nhày nhập khẩu nhập đúng kiểu Năm/ tháng / ngày (1900/02/28)',
-            'fileimg.mimes' =>'File không đúng định dạng png, jpg, jpeg,gif'
+            'fileimg.mimes' =>'File không đúng định dạng png, jpg, jpeg,gif',
+            'username.required' => 'Tài khoảng không được để trống',
+            'password.required' =>'Mật khẩu không dược để trống',
 
    		]);
         $hk = DB::table('hokhau')->select('*')->where('id',$id)->first();
@@ -107,14 +122,27 @@ class nhankhauController extends Controller
         }
    		try {
 
-             if ($rq->hasFile('fileimg')) {
+             if ($rq->imgbase64) {
            
-                $file = $rq->fileimg;
+                // $file = $rq->fileimg;
                
                 
-                $namefile = 'hom-nay-up-hinh-'.time().'.jpg';
-                Storage::putFileAs('avatars', $file,$namefile);
-                $url = 'upload/avatars/'.$namefile;
+                // $namefile = 'hom-nay-up-hinh-'.time().'.jpg';
+                // Storage::putFileAs('avatars', $file,$namefile);
+                // $url = 'upload/avatars/'.$namefile;
+                $image_64 = $rq->input('imgbase64');
+                // @list($type, $file_data) = explode(';', $base64_image);
+                // @list(, $file_data) = explode(',', $file_data);
+                $base64_image = $rq->input('imgbase64');
+
+                $image = $rq->imgbase64;  // your base64 encoded
+                $image = str_replace('data:image/png;base64,', '', $image);
+                $image = str_replace(' ', '+', $image);
+                $imageName = str_random(10).'.'.'png';
+               
+                Storage::put($imageName,base64_decode($image));
+                $url = 'upload/avatars/'.$imageName;
+                
             }
             else $url = '';
    			$date_ngaysinh = date_format(date_create($rq->ngay_sinh),'Y-m-d H:i:s');
@@ -126,12 +154,12 @@ class nhankhauController extends Controller
    			if($rq->ngay_mat!="")
    			{
    				$date_ngaymat = date_format(date_create($rq->ngay_mat),'Y-m-d H:i:s');
-   				$idchuho=DB::table('nhankhau')->insertGetId(['ho_ten'=>$rq->ho_ten,'ngay_sinh'=>$date_ngaysinh,'ngay_mat'=>$date_ngaymat,'gioi_tinh'=>$rq->gioi_tinh,'quan_he'=>$rq->quan_he,'email'=>$rq->email,'sdt'=>$rq->sdt,'ngay_nhap_khau'=>$date_ngaynhapkhau,'hokhau_id'=>$id,'images'=>$url]);
+   				$idchuho=DB::table('nhankhau')->insertGetId(['ho_ten'=>htmlspecialchars($rq->ho_ten),'ngay_sinh'=>$date_ngaysinh,'ngay_mat'=>$date_ngaymat,'gioi_tinh'=>$rq->gioi_tinh,'quan_he'=>htmlspecialchars($rq->quan_he),'email'=>htmlspecialchars($rq->email),'sdt'=>htmlspecialchars($rq->sdt),'ngay_nhap_khau'=>$date_ngaynhapkhau,'hokhau_id'=>$id,'images'=>htmlspecialchars($url),'user'=>htmlspecialchars($rq->username),'password'=>htmlspecialchars(bcrypt($rq->password))]);
    			}
    			else
    			{
    				$date_ngaymat = "";
-   				$idchuho=DB::table('nhankhau')->insertGetId(['ho_ten'=>$rq->ho_ten,'ngay_sinh'=>$date_ngaysinh,'ngay_mat'=>null,'gioi_tinh'=>$rq->gioi_tinh,'quan_he'=>$rq->quan_he,'email'=>$rq->email,'sdt'=>$rq->sdt,'ngay_nhap_khau'=>$date_ngaynhapkhau,'hokhau_id'=>$id,'images'=>$url]);
+   				$idchuho=DB::table('nhankhau')->insertGetId(['ho_ten'=>htmlspecialchars($rq->ho_ten),'ngay_sinh'=>$date_ngaysinh,'ngay_mat'=>null,'gioi_tinh'=>$rq->gioi_tinh,'quan_he'=>htmlspecialchars($rq->quan_he),'email'=>htmlspecialchars($rq->email),'sdt'=>$rq->sdt,'ngay_nhap_khau'=>$date_ngaynhapkhau,'hokhau_id'=>$id,'images'=>htmlspecialchars($url),'user'=>htmlspecialchars($rq->username),'password'=>htmlspecialchars(bcrypt($rq->password))]);
    			}
    			$chuho = DB::table('hokhau')->where('id',$id)->where('chuho_id','<>',null)->first();
             if(!$chuho)
@@ -151,7 +179,15 @@ class nhankhauController extends Controller
         $link = $link->images;
         if($link)
         {
-            unlink(storage_path('../public/'.$link));
+            if (file_exists(storage_path('../public/'.$link))) 
+            {
+               unlink(storage_path('../public/'.$link));
+            } 
+            else 
+            {
+                       echo "The file does not exist";
+                   }
+            
         }
         
     	DB::table('nhankhau')->where('id',$id)->delete();
@@ -164,18 +200,26 @@ class nhankhauController extends Controller
     }
     public function getEdit($id,$id_hk)
     {
+        $hk = DB::table('hokhau')->select('*')->where('id',$id_hk)->count();
+        if($hk !=1)
+        {
+            return view('layouts.404');
+        }
         $nk = DB::table('nhankhau')->select('*')->where('id',$id)->first();
         return view('nhankhau.edit',['id'=>$id,'nk'=>$nk]);
     }
     public function postEdit($id,$id_hk,Request $rq)
-    {    $validate= $rq->validate([
+    {   
+
+        $validate= $rq->validate([
                 'ho_ten'=>'required',
                 'ngay_sinh'=>'required|date_format:Y/m/d',
                 'quan_he'=>'required',
                 'email'=>'required|email',
                 'sdt'=>'required',
                 'ngay_nhap_khau'=>'required|date_format:Y/m/d',
-                'fileimg'=>'mimes:png,jpg,jpeg,gif'
+                'fileimg'=>'mimes:png,jpg,jpeg,gif',
+                
 
             ],
             [
@@ -188,7 +232,8 @@ class nhankhauController extends Controller
                 'ngay_nhap_khau.required'=>'Ngày nhập khẩu không được để trống',
                 'ngay_sinh.date_format'=>'Nhày sinh nhập đúng kiểu Năm/ tháng / ngày (1900/02/02)',
                 'ngay_nhap_khau.date_format' =>'Nhày nhập khẩu nhập đúng kiểu Năm/ tháng / ngày (1900/02/02)',
-                'fileimg.mimes' =>'File không đúng định dạng png, jpg, jpeg,gif'
+                'fileimg.mimes' =>'File không đúng định dạng png, jpg, jpeg,gif',
+
 
             ]);
         if($rq->hasFile('fileimg'))
@@ -206,10 +251,11 @@ class nhankhauController extends Controller
                
                 
                 $namefile = 'hom-nay-up-hinh-'.time().'.jpg';
-                Storage::putFileAs('avatars', $file,$namefile);
+                Storage::putFileAs('', $file,$namefile);
                 $url = 'upload/avatars/'.$namefile;
                 DB::table('nhankhau')->where('id',$id)->update(['images'=>$url]);
             }
+
             $date_ngaysinh = date_format(date_create($rq->ngay_sinh),'Y-m-d H:i:s');
             $date_ngaynhapkhau = date_format(date_create($rq->ngay_nhap_khau),'Y-m-d H:i:s');
             if($rq->ngay_mat!="")
@@ -222,13 +268,17 @@ class nhankhauController extends Controller
                 $date_ngaymat = null;
             }
             
+            if($rq->password!="")
+            {
+                DB::table('nhankhau')->where('id',$id)->update(['password'=>htmlspecialchars($rq->password)]);
+            }
             DB::table('nhankhau')->where('id',$id)->update([
-                'ho_ten' =>$rq->ho_ten,
+                'ho_ten' =>htmlspecialchars($rq->ho_ten),
                 'ngay_sinh' =>$date_ngaysinh,
                 'ngay_mat' =>$date_ngaymat,
                 'gioi_tinh' =>$rq->gioi_tinh,
-                'quan_he'=>$rq->quan_he,
-                'email' =>$rq->email,
+                'quan_he'=>htmlspecialchars($rq->quan_he),
+                'email' =>htmlspecialchars($rq->email),
                 'sdt'=>$rq->sdt,
                 'ngay_sinh' =>$date_ngaynhapkhau,
             ]);

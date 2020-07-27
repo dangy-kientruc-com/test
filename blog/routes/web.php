@@ -10,11 +10,13 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::get('/test','Backend\IndexController@test');
+Route::get('/test2','Backend\IndexController@test2');
 Route::get('/login','Backend\IndexController@getLogin')->name('login');
 Route::post('/login','Backend\IndexController@postLogin');
 Route::get('/logout','Backend\IndexController@getLogout');
 Route::get('/error','Backend\IndexController@getError')->name('truycap');
+
 Route::group(['middleware'=>'checkuser'],function(){
 
 	Route::group(['middleware'=>'checkmanager'],function(){

@@ -1,4 +1,7 @@
 @extends('master')
+@section('css')
+<link rel="stylesheet" type="text/css" href="{{asset('/css/')}}/nhankhau.css">
+@endsection
 @section('main')
 <div>
 	<h2>
@@ -20,7 +23,7 @@
 	@endif
 	
 	<div>
-		<table id="table_id" class="display">
+		<!-- <table id="table_id" class="display">
 		    <thead>
 		        <tr>
 		            <th>ID</th>
@@ -62,11 +65,73 @@
 		        </tr>
 		       	@endforeach
 		    </tbody>
-		</table>
+		</table> -->
+		<div class="table-filter">
+			<form>
+				<div style="display: grid; grid-template-columns: 30% 30% auto; grid-gap: 10px;">
+					<div>
+						<select name="sort" class="form-control">
+							<option value="ASC">
+								Sấp xếp theo tên tăng dần
+							</option>
+							<option value="DESC">
+								Sấp xếp theo tên giảm dần
+							</option>
+						</select>
+					</div>
+					<div>
+						<input type="text" name="s" class="form-control" placeholder="Nhập tên cần tìm" value="<?php if(isset($_GET['s'])) echo $_GET['s']; ?>">
+					</div>
+					<div>
+						<button class="btn btn-success">tìm kiếm</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="table-tr table-th">
+			<div>ID</div>
+			<div>Họ tên</div>
+			<div>Hình ảnh</div>
+			<div>Ngày sinh</div>
+			<div>Ngày mất</div>
+			<div>Giới tính</div>
+			<div>Quan hệ</div>
+			<div>Email</div>
+			<div>SDT</div>
+			<div>Ngày NK</div>
+			 @if(Auth::check())
+			<div></div>
+			@endif
+		</div>
+		<div>
+			@foreach ($nk as $key =>$value)
+			<div class="table-tr">
+				<div>{{$value->id}}</div>
+				<div>{{$value->ho_ten}}</div>
+				<div>
+					<img src="{{asset('/').$value->images}}" style="width: 100%;">
+				</div>
+				<div>{{date_format(date_create($value->ngay_sinh),'d-m-Y')}}</div>
+				<div>@if ($value->ngay_mat !="") {{date_format(date_create($value->ngay_mat),'d-m-Y')}} @endif</div>
+				<div>@if($value->gioi_tinh == 1 ) {{ 'Nam'}} @else {{'Nữ'}}  @endif</div>
+				<div>{{$value->quan_he}}</div>
+				<div>{{$value->email}}</div>
+				<div>{{$value->sdt}}</div>
+				<div>{{date_format(date_create($value->ngay_nhap_khau),'d-m-Y')}}</div>
+
+				@if(Auth::check())
+				<div>
+				 	<a href="xoa-nhan-khau/{{$value->id}}-{{$value->hokhau_id}}" class="delete"><button class="btn btn-danger">Xóa</button></a>
+		            <a href="sua-nhan-khau/{{$value->id}}-{{$value->hokhau_id}}"><button class="btn btn-primary">Edit</button></a>
+		        </div>
+				@endif
+			</div>
+			@endforeach
+		</div>
 	</div>
 </div>
 @if(Auth::check())
-<div class="popup-excel fadeIn" style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,0.8);display: none;z-index: 111">
+<div class="popup-excel fadeIn" style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,0.8);display: none;z-index: 111;overflow: auto;">
 			<div style="width: 1200px;background: #FFF;padding: 10px;margin: auto;margin-top: 100px;position: relative;border-radius: 4px;">
 				<div class="close-popup-excel" style="width: 30px;height: 30px;border-radius: 100%;background: #FFF;position: absolute;top: -40px;right: -40px;display: flex;align-items: center;justify-content: center;">X</div>
 				<div style="border-bottom: 1px solid #d3d3d3;"><h3>Danh sách hộ khẩu</h3></div>
