@@ -205,6 +205,7 @@ class IndexController extends Controller
 
            
             $output_array = array();
+            $output_array[] = array('id','hộ khẩu code','tên chủ hộ','địa chỉ', 'ngày cấp');
             foreach ($array as $key => $value) {
                $output_array[] = array("id" =>$value->id,'hk_cd'=>$value->hk_cd,'chuho_id'=>$value->chuho_id,'dia_chi'=>$value->dia_chi,'ngay_cap'=>$value->ngay_cap);
             }

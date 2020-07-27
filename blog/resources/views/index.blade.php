@@ -202,11 +202,14 @@
 			$('.popup-excel').css('display','none');
 		});
 		$('#Download').click(function(){
+
 			$(this).attr('disabled','disabled');
 			console.log($('input[name="charset"]:checked').val());
 			var url =$(this).attr('data-url');
-			console.log(url);
+			$('.popup-excel').css('display','none');
+			$(this).removeAttr('disabled');
 			window.location.href=url+'?charset='+$('input[name="charset"]:checked').val();
+			
 		});
 		$('.click-list').click(function(){
 			$('.show-list .DS').html('');
