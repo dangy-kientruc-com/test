@@ -183,7 +183,7 @@
 								SHIFT-JIS
 							</div>
 						</div>
-						<div><button class="btn btn-info" id="Download" data-url="{{asset('/')}}nhan-khau/export-{{$id}}">Download</button></div>
+						<div><button class="btn btn-info" id="Download" data-url="{{asset('/')}}nhan-khau/export-{{$id}}" data-page="<?php if(isset($_GET['page'])) echo $_GET['page']; else echo 1; ?>" data-hk="<?php echo $id; ?>">Download</button></div>
 					</div>
 				</div>
 			</div>
@@ -213,8 +213,9 @@
 			$(this).attr('disabled','disabled');
 			console.log($('input[name="charset"]:checked').val());
 			var url =$(this).attr('data-url');
+			var id_hk = $(this).attr('data-hk');
 			console.log(url);
-			window.location.href=url+'?charset='+$('input[name="charset"]:checked').val();
+			window.location.href=url+'?charset='+$('input[name="charset"]:checked').val()+'&id_hk='+id_hk;
 		})
 </script>
 @endsection

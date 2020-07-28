@@ -94,10 +94,8 @@ class nhankhauController extends Controller
             'fileimg'=>'mimes:png,jpg,jpeg,gif',
             'username'=>'required',
             'password' =>'required',
-
    		],
    		[
-
    			'ho_ten.required'=>'Họ tên  công dân không được để trống',
    			'ngay_sinh.required' =>'Ngày sinh không được để trống',
    			'quan_he.required' =>'Ngày cấp không được để trống',
@@ -291,7 +289,56 @@ class nhankhauController extends Controller
     }
     public function export2(Request $rq,$id)
     {
-        return Excel::download(new Export2($rq->charset,$id) ,'nhankhau.csv');
+
+        if(!$rq->id_hk)
+        {
+            return view('layouts.404');
+        }
+        $hk = DB::table('hokhau')->select('*')->where('id',$rq->id)->count();
+        if($hk!=1)
+        {
+            return view('layouts.404');
+        }
+        if($rq->charset =='UTF-8')
+        {
+             return Excel::download(new Export2($rq->charset,$id) ,'nhankhau.csv');
+        }
+        else
+        {   
+            
+            $download='test.csv';
+            $array = DB::table('nhankhau')->select('*')->where('hokhau_id',$rq->id_hk)->get()->toArray();
+
+           
+            $output_array = array();
+            $output_array[]= array('id','ho_ten','hinh_anh','ngay_sinh','ngay_mat','gioi_tinh','email','sdt','ngay_nhap_khau');
+            foreach ($array as $key => $value) {
+               $output_array[] = array("id" =>$value->id,'ho_ten'=>$value->ho_ten,'hinh_anh'=>$value->images,'ngay_sinh'=>$value->ngay_sinh,'ngay_mat'=>$value->ngay_mat,'gioi_tinh'=>$value->gioi_tinh,'email'=>$value->email,'sdt'=>$value->sdt,'ngay_nhap_khau'=> $value->ngay_nhap_khau);
+            }
+            
+            header('Cache-Control: public');
+            header('Pragma: public');
+            header('Content-Type: application/octet-stream');
+            header(sprintf("Content-Disposition: attachment;filename=".$download));
+            header('Content-Transfer-Encoding: binary');
+
+            $fp = fopen('php://temp', 'r+b');
+            // foreach($array as $item){
+            //     $repl = str_replace(array('"', "\n"), array('\"', '\n'), $item);
+                foreach ($output_array as $row_array):
+                    
+
+                    $tmp_arr = str_replace(array('"', "\n"), array('\"', '\n'), $row_array);
+                    fputcsv($fp, $tmp_arr);
+                endforeach;
+            // }
+            rewind($fp);
+            $temp = str_replace(PHP_EOL, "\r\n", stream_get_contents($fp));
+            echo mb_convert_encoding($temp, 'SJIS', 'UTF-8');
+            fclose($fp);
+            exit;
+        }
+       
     }
     public function ajaxIndex($id){
         $nk=DB::table('nhankhau')->select('*')->where('hokhau_id',$id)->get();
