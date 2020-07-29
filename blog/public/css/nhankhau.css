@@ -1,0 +1,19 @@
+.table-tr
+{
+	display: grid;grid-template-columns: 50px 150px 60px 100px 100px 100px 100px 200px 100px 100px auto; grid-gap: 10px;
+	padding: 6px 10px;
+	line-height: 30px;
+}
+.table-tr.table-th
+{
+	background: #2aabd2 !important;
+	color: #FFF;
+}
+.table-tr:nth-child(2n)
+{
+	background: #f3f3f3;
+}
+.table-filter
+{
+	margin-bottom: 10px;
+}

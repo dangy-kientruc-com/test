@@ -14,9 +14,9 @@ class Hokhau extends Migration
     public function up()
     {
         Schema::create('hokhau',function (Blueprint  $table){
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('hk_cd');
-            $table->integer('chuho_id');
+            $table->integer('chuho_id')->nullable();
             $table->string('dia_chi');
             $table->dateTime('ngay_cap');
         });

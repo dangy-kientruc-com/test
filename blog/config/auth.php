@@ -46,6 +46,10 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'nhankhau'=>[
+            'driver'=>'session',
+            'provider'=>'nhankhaus'
+        ],
     ],
 
     /*
@@ -70,7 +74,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
-
+        'nhankhaus'=>[
+            'driver' =>'eloquent',
+            'model' =>App\Nhankhau::class,
+        ]
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
